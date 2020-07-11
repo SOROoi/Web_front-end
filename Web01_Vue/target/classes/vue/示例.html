@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="js/vue.js"></script>
+
+</head>
+<body>
+	<div id="app">
+		<input type="text" v-model="num" @click="num++">
+		<button @click="num++">+</button>
+		<h1>
+			{{name}} Hello! <br> {{num}} 位朋友!
+		</h1>
+	</div>
+</body>
+
+<script>
+	new Vue({
+		el : "#app",
+		data : {
+			name : "vue",
+			num : 1,
+		}
+	});
+</script>
+</html>
