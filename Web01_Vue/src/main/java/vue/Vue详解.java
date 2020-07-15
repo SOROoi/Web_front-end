@@ -24,38 +24,127 @@ package vue;
 		2.script：	1.创建 Vue 的实例，绑定标签、数据(model)、方法、钩子函数		--注意：创建 Vue 对象，首字母要大写！
 						1. Vue中 this：代表 Vue的实例。
 		
-		3.html：		1.使用 插值表达式 展示 model中数据：	{{num}}					--弊端：网速差时会出现插值闪烁，因为script代码加载完才显示
+		3.html：		(指令中可以写：数据、函数、JS表达式)
+					1.使用 插值表达式 --- 展示 model中数据：	{{num}}					--弊端：网速差时会出现插值闪烁，因为script代码加载完才显示
 					 .使用 v-text 指令 展示text数据：	<span v-text="name"></span>
 					 .使用 v-html 指令 展示html数据：	<span v-html="word"></span>
 					 
-					2.使用 v-model 指令，双向绑定 model：	
+					2.使用 v-model 指令 --- 双向绑定 model数据：	
 						<input type="text" v-model="name">				--用户可输入的标签都可以使用该指令
 					
-					3.使用 @事件(v-on:事件) 指令---标签中事件绑定 JS表达式或函数:	
+					3.使用 @事件(v-on:事件) 指令 --- 事件绑定 JS表达式或函数:	
 						<button @click="num++">+</button>				--绑定JS表达式，'@事件' 是 'v-on:事件' 的简化写法.
 						<button @click="sayhi('都好')">打招呼</button>	--绑定函数
 						
-					4.使用 @事件.stop 指令---阻止事件冒泡(事件发生后，从里向外传播)：
+					4.使用 @事件.stop 指令 --- 阻止事件冒泡(事件发生后，从里向外传播)：
 						<button @click.stop="click('button')">点击按钮</button>
 
-					 .使用 @事件.prevent 指令---阻止默认事件发生(如跳转)：
+					 .使用 @事件.prevent 指令 --- 阻止默认事件发生(如跳转)：
 						<a href="http://www.baidu.com" @click.prevent="click('百度')">百度</a>
+						
+					5.使用 v-for 指令 --- 遍历 数组(对象 , 索引)：
+						<li v-for="(p,i) in peoples">
+							<span v-text="p.name + ',' + p.gender + ',' + p.age"></span>
+						</li>
+						
+					 .使用 v-for 指令 --- 遍历 对象(value , key , 索引)：
+						<li v-for="(v,k,i) in peoples[0]">
+							<span v-text="k+':'+v"></span>
+						</li>
+						
+					 .使用 v-for 指令 --- 遍历 数字：
+						<li v-for="i in 5">
+							<span v-text="i"></span>
+						</li>
+						
+					 .使用 :key 指令 --- 数据变更时，提高渲染效率(只渲染变更数据)：
+					 	<li v-for="(p,i) in peoples" :key="i">
+							<span v-text="p.name"></span>
+						</li>
+						
+					6.使用 v-if 指令 --- 结果为true时，所在元素才渲染：(显示则有标签,不显示则无标签)		--显示一次的数据，用v-if
+						<h1 v-if="show">你好</h1>
+						
+					 .使用 v-if / v-else / v-else-if 指令 --- 结合 v-for 使用：
+					 	<li v-for="i in 9">
+							<span v-if="i < 5" v-text="'小于五的数：'+i" style="background-color: orange;"></span>
+							<span v-else-if="i > 5" v-text="'大于五的数：'+i" style="background-color:gray;"></span>
+							<span v-else v-text="'等于五的数：'+i"></span>		--中间不可有其他标签
+						</li>
+						
+					7.使用 v-show 指令 --- 结果为true时，所在元素才渲染：(通过css样式 display来显示)	--多次改变显示的数据，用v-show
+						<h1 v-show="show">你好</h1>
+						
+					8.使用 v-bind(:属性) 指令 --- html属性 绑定数据：
+						<div v-bind:class="color"></div>
+						
+					 .使用 v-bind 指令 --- 传入json对象 切换 class值：
+					 	<div v-bind:class="{blue: showColor, red: !showColor}"></div>
+						<button @click="showColor = !showColor">更换背景色</button>
+						
+					9.computed 计算属性：
+						0.Vue中 data中定义 birthday.
+						1.Vue中定义 计算属性：	
+												computed:{
+													birth : function(){		// 方法执行后存入birth属性，必须返回结果
+											            const d = new Date(this.birthday);
+											            return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDay();
+											        }
+												}
+											
+						2.html中使用数据birth:
+												{{birth}}
+						
+						
+					10.watch 监控一个值的变化：
+						0.Vue中 data中定义 watchValue.
+						1.Vue中定义 watch：
+												watch : {
+													num : function(newVal, oldVal) {	//浅监控，监控num的变化(新值、旧值)
+														console.log(newVal + "," + oldVal);
+													},
+													watchValue:{
+														deep:true,
+														handler: function(newVal){		//深度监控，监控对象的变化(新对象)
+															console.log(newVal);
+														}
+													}
+												}
+					
+					
 				
 			例:		<script>
 						new Vue({
 							el : "#app",
 							data : {
-								name : "vue",
+								name : "Vue啊",
 								num : 1,
 								message : "你们好！",
-								word : "<h1>世界和平</h1>"
+								word : "<h1>世界和平</h1>",
+								dinner : [],
+								peoples : [ {
+									name : '小明',
+									gender : '男',
+									age : 20
+								}, {
+									name : '小红',
+									gender : '女',
+									age : 18
+								}, {
+									name : '小飞',
+									gender : '男',
+									age : 19
+								} ]
 							},
 							methods : {
-								sayhi : function(msg){
-									this.message=msg;
+								sayhi : function(msg) {
+									this.message = msg;
+								},
+								click : function(msg) {
+									console.log(msg);
 								}
 							},
-							created: function() {
+							created : function() {
 								console.log("Vue实例创建了");
 							},
 						});
