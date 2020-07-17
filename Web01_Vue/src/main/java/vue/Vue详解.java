@@ -278,32 +278,193 @@ package vue;
         1.通常一个单页应用由许多个组件组成，因此需要组件间进行通信。
 
         
-        1.props（父向子传递）
-            1.父组件使用子组件，定义 xx属性。
-            2.子组件通过 props接收父组件 xx属性。
+        1.父向子通信（props）
+            1.子组件props： 1.定义属性用于接收。
+                            2.定义属性可被template使用。
+            2.父组件注册子组件。
             3.通过 html子组件 v-bind:指令绑定父属性，进行传递。
                 
             子组件：
-                const comp2 = {
-                    template : "<div>{{haha}}</div>",
-                    props : ['haha'],       //props 接收父组件属性
+                (无默认值：props为数组)
+                const comp3 = {
+                    template : "<ul><h3>父向子通信--无默认值</h3><li v-for='o in list'>{{o}}</li></ul>",
+                    props : ['list'],               //props 接收父组件属性
+                };
+                
+                (有默认值：props为对象)
+                const comp4 = {
+                    template : "<ul><h3>父向子通信--有默认值</h3><li v-for='o in list'>{{o}}</li></ul>",
+                    props : {                       //props 接收父组件属性
+                        list : {
+                            type : Array,           //限定父组件 传递的数据类型
+                            default : ['Vue'],      //设置list默认值
+                        },
+                    },        
                 };
                 
             父组件：
                 new Vue({
                     el : "#app",
                     data : {
-                        message : "你们好！",
+                        friends : ['小张','小赵','小刘'],
                     }
                     components:{
-                        comp2,             //简写
+                        comp3,comp4                 //简写
                     },
                 });
                 
             子组件标签：
-                <comp2 :haha="message"></comp2>
+                <comp3 :list="friends"></comp2>     //父向子传递数据，简写
+                
+                
+        2.子向父通信（methods）
+            1.子组件methods：定义方法，可以在template中使用。
+            2.子组件methods中方法：定义事件。
+            3.父组件注册子组件。
+            4.‘子组件标签的事件’与‘父组件方法’通过 v-on:指令绑定，完成通信。
+            
+            子组件：
+                const comp5 = {                 //使用``符号替换""
+                    template : `
+                        <div>
+                            <button @click="add">加</button>
+                            <button @click="reduce">减</button>
+                            {{num}}
+                        </div>
+                    `,
+                    props : ['num'],
+                    methods : {
+                        add(){
+                            this.$emit("inc");  //定义事件("事件名",参数)    Vue提供的内置的this.$emit()函数，用来调用父组件绑定的函数
+                        },
+                        reduce(){
+                            this.$emit("dec");  //定义事件
+                        },
+                    },
+                };
         
+            父组件：
+                new Vue({
+                    el : "#app",
+                    data : {
+                        num : 0,
+                    },
+                    components : {
+                        comp5,                  //注册组件
+                    },
+                });
+                
+            子组件标签：
+                <comp5 :num="num" @inc="num++" @dec="num--"></comp5>
  */
+
+ 
+/*                      安装 node.js(npm) \ vue-cli \ 创建vue项目
+    
+    1.前提--安装 node.js(内置npm)
+    
+        0.node.js介绍:
+            1.是一个Javascript运行环境(runtime environment)，不是一个js文件，实质是对Chrome V8引擎进行了封装。
+            2.node.js安装后自带 npm工具(用于管理js依赖包)。
+    
+        1.官网：https://nodejs.org/zh-cn/
+            
+        2.node和npm的关系：
+            参考网址：https://blog.csdn.net/hong10086/article/details/85062678
+        
+        3.安装步骤：
+            1.下载windows  msi安装包。
+            2.一路点击安装。
+            3.其中automatically install the necessary tools,note that this will also install chocolatey, 
+             the script will pop-up in a new window after the inatallation completes。   打勾，即可自动安装必需的工具。
+             
+            4.安装完成后，查看node版本。
+                cmd输入：node -v
+                
+        4.安装cnpm:
+            1.npm安装依赖从 npm的国外服务器下载，下载缓慢。这时便需要找到另外的方法提供稳定的下载，这个方法就是 cnpm。
+            2.阿里巴巴的淘宝团队把 npm官网的依赖都同步到了在中国的服务器，我们可以从此服务器上稳定下载资源，同步频率目前为10分钟一次。
+            3.cnpm同样是 npm的一个插件，要安装的话需要在 cmd命令行控制台执行以下命令：
+                npm install cnpm -g --registry=https://registry.npm.taobao.org
+                
+            4.安装完成后可以使用 cnpm -v 命令查看版本号，要使用 cnmp命令的话最好在安装后重新打开 cmd命令行控制台。
+            5.cnpm的用法和 npm的用法一致，只是在执行命令的时候将 npm改为 cnpm。
+                
+                
+    2.安装 vue-cli
+        
+        0.vue-cli介绍：
+            vue-cli是 vue的脚手架，使用它可以快速的构建一个web工程模板。
+            
+        1.官网：https://cli.vuejs.org/zh/guide/installation.html
+        
+        2.安装前提：
+            Vue CLI 需要 Node.js 8.9 或更高版本 (推荐 8.11.0+)。
+        
+        3.安装步骤
+            1.打开cmd，输入安装命令。可以将命令中 npm替换为 cnpm.
+                输入：npm install -g @vue/cli
+                见官网：https://cli.vuejs.org/zh/guide/installation.html
+                
+            2.安装完成后，查看版本。
+                输入：vue -V
+    
+            3.若仍要使用vue-cli 2.x版本语法（vue init），需全局安装一个桥接工具：
+                输入：npm install -g @vue/cli-init
+    
+    
+    
+    3.创建 vue项目： (vue-cli 2.x 语法)
+    
+        1.创建项目-- cmd到 vue项目目录下，     (基于webpack打包的项目)
+            输入：vue init webpack 项目名
+            
+            选择以下指令：
+                ? Project name vue_demo                                     --项目名
+                ? Project description A Vue.js project                      --项目描述
+                ? Author SOROoi <545772909@qq.com>                          --项目作者
+                ? Vue build standalone                                      --项目运行环境+编译器
+                ? Install vue-router? Yes                                   --安装 vue路由
+                ? Use ESLint to lint your code? No                          --使用 ESLint语法校验
+                ? Set up unit tests No
+                ? Setup e2e tests with Nightwatch? No
+                ? Should we run `npm install` for you after the project has been created? (recommended) npm     --使用 npm安装依赖
+            
+        2.启动项目-- cmd到 vue项目下：
+            输入：npm run dev
+            
+        3.关闭项目:
+            输入：Ctrl+C
+            
+            
+    4. vue项目 目录结构： (vue-cli 2.x 语法)
+        0.参考于：https://blog.51cto.com/4547985/2390789
+        
+        1.目录结构：
+        
+            build                   --webpack相关配置文件
+            config                  --vue基本配置文件
+            node_modules            --依赖包
+            
+            src                     --项目核心文件(编写代码)
+                --assets            --静态资源(样式文件，以及外部js文件)
+                --components        --公共组件
+                --router            --路由(配置项目路由)
+                --App.vue           --根组件
+                --main.js           --入口文件
+                
+            static                  --静态资源，如图片
+            dist                    --打包后的文件(类似于maven中target目录)
+            
+            .babelrc                --babel编译参数
+            .editorconfig           --代码格式
+            .gitignore              --git上传忽略的文件
+            .postcssrc.js           --转换css的工具
+            index.html              --主页
+            package.json            --项目基本信息，自动生成
+            package-lock.json
+            README.md               --项目说明
+*/
 
 public class Vue详解 {
 

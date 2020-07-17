@@ -1801,7 +1801,7 @@ var app = new Vue({
 
 一个页面，包含登录和注册，点击不同按钮，实现登录和注册页切换：
 
- ![](H:/%E4%B9%90%E4%BC%98/day05-Vue/assets/8.gif)
+ ![](assets/8.gif)
 
 
 
@@ -2121,7 +2121,7 @@ var vm = new Vue({
 
 - 原来的index.html中引入了很多其它js，在这里我们使用es6的import语法进行导入。
 
-- ​
+- 
 
   注意，要使用import，就需要在login.js和register.js中添加export导出语句：
 

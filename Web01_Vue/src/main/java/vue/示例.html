@@ -100,10 +100,16 @@
     
         <!-- 使用Vue局部组件 -->
         <comp2></comp2>
+        <hr/>
         
         
-        <!-- 父子间通信  -->
-        <comp2 :haha="watchValue.name"></comp2>
+        <!-- 父向子通信  无默认值-->
+        <comp3 :list="friends"></comp3>     
+        <!-- 父向子通信  有默认值-->
+        <comp4></comp4>
+        
+        <!-- 子向父通信-->
+        <comp5 :num="num" @inc="num++" @dec="num--"></comp5>
     </div>
     
 
@@ -132,6 +138,44 @@
         props : ['haha'],
     };
 
+    
+    //1.父向子通信-无默认值
+    const comp3 = {
+        template : "<ul><h3>父向子通信--无默认值</h3><li v-for='o in list'>{{o}}</li></ul>",
+        props : ['list'],
+    };
+    //2.父向子通信-有默认值
+    const comp4 = {
+        template : "<ul><h3>父向子通信--有默认值</h3><li v-for='o in list'>{{o}}</li></ul>",
+        props : {
+            list : {
+                type:Array,         //限定类型
+                default:['Vue'],    //默认值
+            },
+        },
+    };
+    
+     //1.子向父通信
+    const comp5 = {                 //使用``符号替换""
+        template : `
+            <div>
+                <button @click="add">加</button>
+                <button @click="reduce">减</button>
+                {{num}}
+            </div>
+        `,
+        props : ['num'],
+        methods : {
+            add(){
+                this.$emit("inc");  //定义事件
+            },
+            reduce(){
+                this.$emit("dec");  //定义事件
+            },
+        },
+    };
+    
+    
 	new Vue({
 		el : "#app",
 		data : {
@@ -144,6 +188,7 @@
 			color : "blue",
 			showColor : true,
 			birthday : 152468466666,
+            friends: ['小张','小赵','小刘'],
 			watchValue : {
 				name : "jack",
 				age : 20,
@@ -196,7 +241,7 @@
         //绑定局部组件
         components:{
             //compp:comp2     //将定义的对象注册为组件 key组件名 value组件对象属性
-            comp2,             //简写
+            comp2,comp3,comp4,comp5             //简写
         },
 	});
 </script>
