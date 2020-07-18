@@ -450,8 +450,8 @@ package vue;
                 --assets            --静态资源(样式文件，以及外部js文件)
                 --components        --公共组件
                 --router            --路由(配置项目路由)
-                --App.vue           --根组件
-                --main.js           --入口文件
+                --App.vue           --3.根组件
+                --main.js           --4.入口文件
                 
             static                  --静态资源，如图片
             dist                    --打包后的文件(类似于maven中target目录)
@@ -460,8 +460,8 @@ package vue;
             .editorconfig           --代码格式
             .gitignore              --git上传忽略的文件
             .postcssrc.js           --转换css的工具
-            index.html              --主页
-            package.json            --项目基本信息，自动生成
+            index.html              --1.主页
+            package.json            --2.项目基本信息，自动生成
             package-lock.json
             README.md               --项目说明
 */
